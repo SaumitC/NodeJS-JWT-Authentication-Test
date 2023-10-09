@@ -25,7 +25,7 @@
             <div>
                 <button onclick="login()">Login</button>
                 <button onclick="getDashboard()">Get Dashboard</button>
-                <button onclick="getSettings()">Settings</button>
+                <button onclick="getSettings()">Get Settings</button>
                 
             </div>
         </main>
@@ -33,6 +33,7 @@
     </div>
 
     <script>
+
 
         function login(){
             const data = {
@@ -63,6 +64,7 @@
                 if(res && res.data && res.data.success) {
                     document.querySelector('h1.row').innerHTML = 'Dashboard';
                     document.querySelector('main').innerHTML = res.data.myContent;
+                    history.pushState(null, null, '/api/dashboard');
                 }
             });
         }
@@ -77,9 +79,36 @@
                 if(res && res.data && res.data.success) {
                     document.querySelector('h1.row').innerHTML = 'Settings';
                     document.querySelector('main').innerHTML = res.data.myContent;
+                    history.pushState(null, null, '/api/settings');
                 }
+                
             });
         }
+
+        //function to calculate if jwt expired after 180seconds
+        function jwtExtract() {
+            const jwt = localStorage.getItem('jwt');
+            if (jwt) {
+                const jwtload = JSON.parse(atob(jwt.split('.')[1]));
+                const expTimeSeconds = jwtload.exp;
+                const expTimeMilliSeconds = expTimeSeconds * 1000;
+                const currTimeMilliSeconds = Date.now();
+
+                if (currTimeMilliSeconds >= expTimeMilliSeconds) {
+                    handleExpiredJwt();
+                }
+            }
+        }
+
+        //if jwt expired then clear jwt from localStorage and page reloads on root address
+        function handleExpiredJwt() {
+            localStorage.removeItem('jwt');
+            window.location.href = '/';
+            clearInterval(intervalId);
+        }
+
+        const intervalId = setInterval(jwtExtract, 10000); //To call function every 10seconds to check if jwt expired
+
     </script>
 </body>
 </html>

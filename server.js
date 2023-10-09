@@ -24,7 +24,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = 3000;
 
 const secretKey = 'My super secret key';
-//const SecretKey = 'My super secret Key';
 const jwtMW = exjwt({
     secret: secretKey,
     algorithms: ['HS256']
@@ -33,12 +32,12 @@ const jwtMW = exjwt({
 let users = [
     {
         id: 1,
-        username: 'fabio',
+        username: 'saumit',
         password: '123'
     },
     {
         id: 2,
-        username: 'nolasco',
+        username: 'sam',
         password: '456'
     }
 ];
@@ -49,7 +48,7 @@ app.post('/api/login', (req, res) => {
 
     for (let user of users) {
         if (username == user.username && password == user.password) {
-            let token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '7d' });
+            let token = jwt.sign({ id: user.id, username: user.username }, secretKey, { expiresIn: '180s' });
             res.json({
                 success: true,
                 err: null,
